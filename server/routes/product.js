@@ -32,6 +32,7 @@ router.post('/image', (req, res) => {
     })
 })
 
+
 router.post('/', (req, res) => {
     // 받아온 상품 정보를 MongoDB에 저장
     const product = new Product(req.body)
@@ -40,6 +41,18 @@ router.post('/', (req, res) => {
         if(err) return res.status(400).json({ success: false })
         return res.status(200).json({ success: true })
     })
+})
+
+
+router.post('/products', (req, res) => {
+    // MongoDB 내 Product collection에 저장된 전체 상품 데이터 가져오기
+    
+    Product.find() // Product Collection에 있는 모든 데이터를 찾는다. find() 내에 조건을 object 형식으로 넣으면 조건에 맞게 찾을 수 있음
+        .populate("writer") // writer의 ObjectId를 이용하여 writer의 모든 정보를 가져온다
+        .exec((err, productInfo) => {  // 위에서 생성한대로 쿼리를 실행하여 err 또는 document를 반환. document에 내가 원하는 데이터가 있다
+            if(err) return res.status(400).json({ success: false, err })
+            else return res.status(200).json({ success: true, productInfo})
+        }) 
 })
 
 module.exports = router;

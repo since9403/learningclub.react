@@ -36,10 +36,9 @@ router.post('/image', (req, res) => {
 router.post('/', (req, res) => {
     // 받아온 상품 정보를 MongoDB에 저장
     const product = new Product(req.body)
-    console.log("product info is " + product);
 
     product.save((err, doc) => {
-        if(err) return res.status(400).json({ success: false })
+        if(err) return res.status(400).json({ success: false, err })
         return res.status(200).json({ success: true })
     })
 })

@@ -36,6 +36,7 @@ router.post('/image', (req, res) => {
 router.post('/', (req, res) => {
     // 받아온 상품 정보를 MongoDB에 저장
     const product = new Product(req.body)
+    console.log("product info is " + product);
 
     product.save((err, doc) => {
         if(err) return res.status(400).json({ success: false })
@@ -48,8 +49,17 @@ router.post('/products', (req, res) => {
     // MongoDB 내 Product collection에 저장된 상품 데이터 가져오기
     let limit = req.body.limit ? parseInt(req.body.limit) : 20;
     let skip = req.body.skip ? parseInt(req.body.skip) : 0;
+
+    let findArgs = {};
+    for(let key in req.body.filters) { // key는 continents 또는 price
+        // continents 또는 price에서 필터링 할 것이 있으면 필터링 된 데이터를,
+        // 필터링 할 것이 없으면(length == 0) 전체 데이터를 가져올 수 있다
+        if(req.body.filters[key].length > 0) {
+            findArgs[key] = req.body.filters[key];
+        }
+    }
     
-    Product.find() // Product Collection에 있는 모든 데이터를 찾는다. find() 내에 조건을 object 형식으로 넣으면 조건에 맞게 찾을 수 있음
+    Product.find(findArgs) // Product Collection에 있는 모든 데이터를 찾는다. find() 내에 조건을 object 형식으로 넣으면 조건에 맞게 찾을 수 있음
         .populate("writer") // writer의 ObjectId를 이용하여 writer의 모든 정보를 가져온다
         .skip(skip)
         .limit(limit)

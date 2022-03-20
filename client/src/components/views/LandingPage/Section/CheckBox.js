@@ -24,7 +24,7 @@ function CheckBox(props) {
         props.handleFilters(newChecked)
     }
 
-    const renderCheckboxLists = () => props.list && props.list.map((value, index) => (
+    const renderCheckBoxLists = () => props.list && props.list.map((value, index) => (
         <React.Fragment key={index}>
             <Checkbox onChange={()=> handleToggle(value._id)} 
                     checked={Checked.indexOf(value._id) === -1? false : true} />
@@ -37,7 +37,7 @@ function CheckBox(props) {
             <Collapse defaultActiveKey={['1']}>
                 <Panel header="This is panel header 1" key="1">
                     {
-                        renderCheckboxLists()
+                        renderCheckBoxLists()
                     }
                 </Panel>
             </Collapse>

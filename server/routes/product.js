@@ -54,7 +54,14 @@ router.post('/products', (req, res) => {
         // continents 또는 price에서 필터링 할 것이 있으면 필터링 된 데이터를,
         // 필터링 할 것이 없으면(length == 0) 전체 데이터를 가져올 수 있다
         if(req.body.filters[key].length > 0) {
-            findArgs[key] = req.body.filters[key];
+            if(key === "price") {
+                findArgs[key] = {
+                    $gte: req.body.filters[key][0],
+                    $lte: req.body.filters[key][1]
+                }
+            } else {
+                findArgs[key] = req.body.filters[key];
+            }
         }
     }
     

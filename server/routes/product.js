@@ -48,6 +48,7 @@ router.post('/products', (req, res) => {
     // MongoDB 내 Product collection에 저장된 상품 데이터 가져오기
     let limit = req.body.limit ? parseInt(req.body.limit) : 20;
     let skip = req.body.skip ? parseInt(req.body.skip) : 0;
+    let term = req.body.searchTerm;
 
     let findArgs = {};
     for(let key in req.body.filters) { // key는 continents 또는 price
@@ -65,7 +66,9 @@ router.post('/products', (req, res) => {
         }
     }
     
-    Product.find(findArgs) // Product Collection에 있는 모든 데이터를 찾는다. find() 내에 조건을 object 형식으로 넣으면 조건에 맞게 찾을 수 있음
+    if(term) {
+        Product.find(findArgs) // Product Collection에 있는 모든 데이터를 찾는다. find() 내에 조건을 object 형식으로 넣으면 조건에 맞게 찾을 수 있음
+        .find({ $text: { $search: term } }) // MongoDB에서 제공하는 기능
         .populate("writer") // writer의 ObjectId를 이용하여 writer의 모든 정보를 가져온다
         .skip(skip)
         .limit(limit)
@@ -76,6 +79,19 @@ router.post('/products', (req, res) => {
                 productInfo,
                 postSize: productInfo.length})
         })
+    } else {
+        Product.find(findArgs) // Product Collection에 있는 모든 데이터를 찾는다. find() 내에 조건을 object 형식으로 넣으면 조건에 맞게 찾을 수 있음
+            .populate("writer") // writer의 ObjectId를 이용하여 writer의 모든 정보를 가져온다
+            .skip(skip)
+            .limit(limit)
+            .exec((err, productInfo) => {  // 위에서 생성한대로 쿼리를 실행하여 err 또는 document를 반환. document에 내가 원하는 데이터가 있다
+                if(err) return res.status(400).json({ success: false, err })
+                return res.status(200).json({ 
+                    success: true, 
+                    productInfo,
+                    postSize: productInfo.length})
+            })
+    }
 })
 
 module.exports = router;

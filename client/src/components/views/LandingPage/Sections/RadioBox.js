@@ -20,8 +20,8 @@ function RadioBox(props) {
 
     return (
         <div>
-            <Collapse defaultActiveKey={['1']}>
-                <Panel header="This is panel header 1" key="1">
+            <Collapse defaultActiveKey={['0']}>
+                <Panel header="Price" key="1">
                     <Radio.Group onChange={handleChange} value={Value}>
                         {/* onChange에서 Radio의 value로 Value state을 업데이트. Radio.Group의 Value가 선택된 Radio이다 */}
                         {

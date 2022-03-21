@@ -94,4 +94,19 @@ router.post('/products', (req, res) => {
     }
 })
 
+router.get('/products_by_id', (req, res) => {
+    
+    // productId를 이용, DB에서 productId와 같은 상품의 정보를 가져온다
+    let type= req.query.type           // type=single
+    let productId = req.query.id       // id=${productId}, 쿼리 스트링 처리방법
+
+    Product.find({ _id: productId })
+        .populate("writer")
+        .exec((err, product) => {
+            if(err) return res.status(400).json({ success: false, err})
+            return res.status(200).json({ success: true, product })
+        })
+})
+
+
 module.exports = router;

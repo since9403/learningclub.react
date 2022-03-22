@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { Descriptions, Button } from 'antd';
+import { Descriptions, Button } from 'antd'
+
+import { addToCart } from '../../../../_actions/user_actions';
+import { useDispatch } from 'react-redux'
 
 function ProductInfo(props) {
 
+  const dispatch = useDispatch();
 
   const clickHandler = () => {
-    
+    // 필요한 정보를 User Model의 cart 필드에 넣기 위함..
+    // 필요한 정보 = ProductId, Quantity, Date
+    dispatch(addToCart(props.detail._id))
   }
 
   return (

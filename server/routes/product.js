@@ -98,9 +98,17 @@ router.get('/products_by_id', (req, res) => {
     
     // productId를 이용, DB에서 productId와 같은 상품의 정보를 가져온다
     let type= req.query.type           // type=single
-    let productId = req.query.id       // id=${productId}, 쿼리 스트링 처리방법
+    let productIds = req.query.id       // id=${productId}, 쿼리 스트링 처리방법
 
-    Product.find({ _id: productId })
+    if(type === "array") {
+        // id=123,456,789 → productIds = ['123', '456', '789']로 변경
+        let ids = req.query.id.split(',') // 123, 456, 789로 나눔
+        productIds = ids.map(item => { // array로 변경
+            return item
+        })
+    }
+
+    Product.find({ _id: { $in: productIds } })
         .populate("writer")
         .exec((err, product) => {
             if(err) return res.status(400).json({ success: false, err})

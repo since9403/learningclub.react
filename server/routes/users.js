@@ -76,14 +76,12 @@ router.post("/addToCart", auth, (req, res) => {
             let duplicate = false;
             // 가져온 정보에서 Cart에 넣으려하는 상품이 이미 있는지 확인
             userInfo.cart.forEach((item) => {
-                console.log(item.id == req.body.productId)
                 if(item.id == req.body.productId) {
                     duplicate = true;  // 쿼리에서 얻어온 cart에 신규 추가하려는 상품이 있는지 확인
                 }
             })
 
             if (duplicate) { // 상품이 이미 있을 때
-                console.log("hear");
                 User.findOneAndUpdate({ _id: req.user._id, "cart.id": req.body.productId }, // id가 req.user._id 이고 id의 cart.id가 req.body.productId인 객체를 찾아서
                                      { $inc: { "cart.$.quantity": 1 } }, // cart.quantity를 하나 더하고
                                      { new: true }, // 업데이트한 값을 리턴한다
@@ -93,7 +91,6 @@ router.post("/addToCart", auth, (req, res) => {
                                      }
                 )                         
             } else { // 상품이 없을 때
-                console.log("not found");
                 User.findOneAndUpdate({ _id: req.user._id },
                                    {
                                        $push: { // 찾은 객체에 push하는데

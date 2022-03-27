@@ -108,13 +108,14 @@ router.get('/products_by_id', (req, res) => {
         })
     }
 
+    console.log(productIds)
     Product.find({ _id: { $in: productIds } })
-        .populate("writer")
+        .populate('writer')
         .exec((err, product) => {
-            if(err) return res.status(400).json({ success: false, err})
+            if (err) return res.status(400).send(err)
             return res.status(200).send(product)
         })
-})
+    })
 
 
 module.exports = router;

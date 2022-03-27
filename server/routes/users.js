@@ -4,12 +4,13 @@ const { User } = require("../models/User");
 
 const { auth } = require("../middleware/auth");
 const { request } = require('express');
+const { Product } = require('../models/Product');
 
 //=================================
 //             User
 //=================================
 
-router.get("/auth", auth, (req, res) => {
+router.get('/auth', auth, (req, res) => {
     res.status(200).json({
         _id: req.user._id,
         isAdmin: req.user.role === 0 ? false : true,
@@ -24,7 +25,7 @@ router.get("/auth", auth, (req, res) => {
     });
 });
 
-router.post("/register", (req, res) => {
+router.post('/register', (req, res) => {
 
     const user = new User(req.body);
 
@@ -36,7 +37,7 @@ router.post("/register", (req, res) => {
     });
 });
 
-router.post("/login", (req, res) => {
+router.post('/login', (req, res) => {
     User.findOne({ email: req.body.email }, (err, user) => {
         if (!user)
             return res.json({
@@ -62,7 +63,7 @@ router.post("/login", (req, res) => {
     });
 });
 
-router.get("/logout", auth, (req, res) => {
+router.get('/logout', auth, (req, res) => {
     User.findOneAndUpdate({ _id: req.user._id }, { token: "", tokenExp: "" }, (err, doc) => {
         if (err) return res.json({ success: false, err });
         return res.status(200).send({
@@ -71,7 +72,7 @@ router.get("/logout", auth, (req, res) => {
     });
 });
 
-router.post("/addToCart", auth, (req, res) => {
+router.post('/addToCart', auth, (req, res) => {
     // User Collection에 해당 유저의 정보를 가져오기
     User.findOne({_id: req.user._id},  // user._id로 가능한 이유는 auth middleware 덕분. req.user에 user 정보가 있다
         (err, userInfo) => {        
@@ -110,7 +111,45 @@ router.post("/addToCart", auth, (req, res) => {
                                     }
                 )
             }
-    })
-});
+        })
+    });
+
+
+    router.get('/removeFromCart', auth, (req, res) => {
+        // User Collection의 cart 내에서 id가 일치하는 product 삭제
+        User.findOneAndUpdate(
+            { _id: req.user._id },
+            {
+                $pull: { // 제거할 때 pull 사용
+                    cart : {
+                        id: req.query.id
+                    }
+                }
+            },
+            {
+                new: true
+            },
+            (err, userInfo) => {
+                // Redux의 cartDetail 정보 업데이트 (Product Collection에서 현재 남아있는 상품들의 정보 가져오기)
+                let cart = userInfo.cart;
+                let array = cart.map(item => {
+                    return item.id
+                })
+
+                // Product Collection에서 array에 있는 id 값과 같은 것을 모두 찾아옴
+                Product.find({ _id : { $in : array } })
+                    .populate('writer')
+                    .exec((err, productInfo) => {
+                        if(err) res.status(400).json({ status: false, err })
+                        return res.status(200).json({
+                            // Product Collection(=productInfo)과 User Collection(=cart)을 합친 것이 cartDetail
+                            productInfo,
+                            cart
+                        })
+                    })
+            }
+        )
+    });
+
 
 module.exports = router;

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
 import UserCardBlock from './Sections/UserCardBlock'
-import { getCartItems } from '../../../_actions/user_actions'
+import { removeCartItem, getCartItems } from '../../../_actions/user_actions'
 
 function CartPage(props) {
 
@@ -11,8 +11,8 @@ function CartPage(props) {
     const [Total, setTotal] = useState(0)
 
     useEffect(() => {
-
         let cartItems = []
+
         // Redux - User state의 cart 안에 상품이 있는지 확인
         if(props.user.userData && props.user.userData.cart) {
             if(props.user.userData.cart.length > 0) {
@@ -36,13 +36,20 @@ function CartPage(props) {
         setTotal(total)
     }
 
+    let removeFromCart = (productId) => {
+        dispatch(removeCartItem(productId))
+            .then(response => {
+                console.log(response)
+            })
+    }
+
     return (
         <div style={{ width: '85%', margin: '3rem auto'}}>
             <h1>My Cart</h1>
             
             <div>
                 {/* Redux의 user에 있는 cartDetail 정보가 있으면 가져온다 */}
-                <UserCardBlock products={props.user.cartDetail} />
+                <UserCardBlock products={props.user.cartDetail} removeItem={removeFromCart} />
             </div>
 
             <div style={{ marginTop: '3rem' }}>

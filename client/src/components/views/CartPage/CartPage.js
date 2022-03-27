@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
+import UserCardBlock from './Sections/UserCardBlock'
 import { getCartItems } from '../../../_actions/user_actions'
 
 function CartPage(props) {
@@ -23,8 +24,13 @@ function CartPage(props) {
     }, [props.user.userData])
 
     return (
-        <div>
-            CartPage
+        <div style={{ width: '85%', margin: '3rem auto'}}>
+            <h1>My Cart</h1>
+            
+            <div>
+                {/* Redux의 user에 있는 cartDetail 정보가 있으면 가져온다 */}
+                <UserCardBlock products={props.user.cartDetail} />
+            </div>
         </div>
     )
 }

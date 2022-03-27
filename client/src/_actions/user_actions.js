@@ -70,9 +70,9 @@ export function getCartItems(cartItems, userCart) {
     .then(response => {
         // Product Collection에서 CartItem에 해당하는 정보를 가져온 후 Quantity 정보를 넣어 준다 
         userCart.forEach(cartItem => { // User의 Cart에 있는 각 아이템에 대하여
-            response.data.product.forEach((productDetail, index) => { // 가져온 각 Product에 대하여
+            response.data.forEach((productDetail, index) => { // 가져온 각 Product에 대하여
                 if(cartItem.id === productDetail._id) { // 상품의 id 일치 시
-                    response.data.product[index].quantity = cartItem.quantity
+                    response.data[index].quantity = cartItem.quantity
                 }
             })
         })

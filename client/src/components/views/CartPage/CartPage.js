@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 
+import { Empty } from 'antd';
+import PayPal from '../../utils/PayPal' 
 import UserCardBlock from './Sections/UserCardBlock'
 import { removeCartItem, getCartItems } from '../../../_actions/user_actions'
 
@@ -9,6 +11,7 @@ function CartPage(props) {
     const dispatch = useDispatch();
 
     const [Total, setTotal] = useState(0)
+    const [ShowTotal, setShowTotal] = useState(false)
 
     useEffect(() => {
         let cartItems = []
@@ -34,12 +37,18 @@ function CartPage(props) {
         })
 
         setTotal(total)
+        setShowTotal(true)
     }
 
     let removeFromCart = (productId) => {
         dispatch(removeCartItem(productId))
             .then(response => {
-                console.log(response)
+                // Cart 내 상품을 지운 후 처리하는 부분
+                console.log(response.payload.cart.length)
+
+                if(response.payload.productInfo.length <= 0) {
+                    setShowTotal(false)
+                }
             })
     }
 
@@ -52,9 +61,20 @@ function CartPage(props) {
                 <UserCardBlock products={props.user.cartDetail} removeItem={removeFromCart} />
             </div>
 
-            <div style={{ marginTop: '3rem' }}>
-                <h2>Total Amount: ${Total}</h2> 
-            </div>
+            {
+                ShowTotal?
+                <div style={{ marginTop: '3rem' }}>
+                    <h2>Total Amount: ${Total}</h2> 
+                </div>
+                :
+                <>
+                    <br />
+                    <Empty description={false} />
+                </>
+            }
+
+            <PayPal />
+
         </div>
     )
 }

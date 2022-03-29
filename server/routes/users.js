@@ -174,6 +174,9 @@ router.post('/successBuy', auth, (req, res) => {
         })
     })
 
+    console.log("history is ")
+    console.log(history)
+
     // 2. Payment Collection에 자세한 결제 정보들 넣어주기
     transactionData.user = {
         id: req.user._id,
@@ -194,7 +197,6 @@ router.post('/successBuy', auth, (req, res) => {
         { new: true },
         (err, user) => {
             if(err) return res.status(400).json({ success: false, err })
-            console.log(user)
             
             // payment에 transaction Data 정보 저장
             const payment = new Payment(transactionData)

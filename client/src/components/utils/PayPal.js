@@ -2,11 +2,19 @@ import React from 'react';
 import PaypalExpressBtn from 'react-paypal-express-checkout';
  
 export default class PayPal extends React.Component {
+
+    state = {
+        finish: false,
+    }
+
     render() {
         const onSuccess = (payment) => {
             // Congratulation, it came here means everything's fine!
-            		console.log("The payment was succeeded!", payment);
-            		// You can bind the "payment" object's value to your state or props or whatever here, please see below for sample returned data
+            console.log("The payment was succeeded!", payment);
+
+            this.props.onSuccess(payment)
+            this.setState({ finish: true })
+            // You can bind the "payment" object's value to your state or props or whatever here, please see below for sample returned data
         }
  
         const onCancel = (data) => {
@@ -39,6 +47,7 @@ export default class PayPal extends React.Component {
  
         // NB. You can also have many Paypal express checkout buttons on page, just pass in the correct amount and they will work!
         return (
+            !this.state.finish && 
             <PaypalExpressBtn 
             env={env} 
             client={client} 

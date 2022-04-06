@@ -17,7 +17,7 @@ function LandingPage() {
 
     const [Products, setProducts] = useState([])
     const [Skip, setSkip] = useState(0)
-    const [Limit, setLimit] = useState(4)
+    const [Limit, setLimit] = useState(6)
     const [PostSize, setPostSize] = useState(0)
 
     const [Filters, setFilters] = useState({
@@ -169,7 +169,7 @@ function LandingPage() {
             
             {
                 PostSize >= Limit &&
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <div style={{ justifyContent: 'center' }}>
                     <button onClick={loadMoreHandler}>더보기</button>
                 </div>
             }
